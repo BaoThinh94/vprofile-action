@@ -18,7 +18,7 @@ public class UserTest {
 	public static final Long EXPECTED_ID = 1L;
 	public static final int EXPECTED_SIZE = 1;
     public static final String EXPECTED_USERNAME = "Wahidkhan74";
-    public static final String EXPECTED_PASSWORD = "Wahidkhan74";
+    public static final String EXPECTED_PASSWORD = "Wahidkhan74"; // NOSONAR
     public static final String EXPECTED_USEREMAIL = "XXXXX@gmail.com";
     private User user;
     @Before
