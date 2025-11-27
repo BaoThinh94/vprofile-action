@@ -85,7 +85,7 @@ jobs:
          tags: latest,${{ github.run_number }}
          daemon_off: false
          dockerfile: ./Docker-files/db/Dockerfile
-         context: ./Docker-files/db/
+         context: ./
 
   DeployToEKS:
     needs: BUILD_AND_PUBLISH
