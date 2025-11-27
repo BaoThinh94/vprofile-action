@@ -1,0 +1,19 @@
+apiVersion: v2
+name: vprofile-app
+description: A Helm chart for VProfile application with MySQL, Memcached, and RabbitMQ
+
+type: application
+version: 0.1.0
+appVersion: "1.0.0"
+
+keywords:
+  - vprofile
+  - java
+  - spring
+  - mysql
+  - memcached
+  - rabbitmq
+
+maintainers:
+  - name: VProfile Team
+    email: admin@vprofile.com

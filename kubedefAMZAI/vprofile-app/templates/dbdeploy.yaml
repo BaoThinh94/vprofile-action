@@ -1,0 +1,46 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.database.name }}
+  labels:
+    {{- include "vprofile-app.labels" . | nindent 4 }}
+    app: {{ .Values.database.name }}
+spec:
+  replicas: {{ .Values.database.replicaCount }}
+  selector:
+    matchLabels:
+      app: {{ .Values.database.name }}
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.database.name }}
+        {{- include "vprofile-app.selectorLabels" . | nindent 8 }}
+    spec:
+      containers:
+        - name: {{ .Values.database.name }}
+          image: "{{ .Values.database.image.repository }}:{{ .Values.database.image.tag }}"
+          imagePullPolicy: {{ .Values.database.image.pullPolicy }}
+          ports:
+            - name: {{ printf "%s-port" .Values.database.name }}
+              containerPort: {{ .Values.database.service.port }}
+              protocol: TCP
+          env:
+            - name: MYSQL_ROOT_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "vprofile-app.fullname" . }}-secret
+                  key: database-password
+          {{- if .Values.database.persistence.enabled }}
+          volumeMounts:
+            - name: vpro-db-data
+              mountPath: /var/lib/mysql
+          {{- end }}
+      {{- if .Values.database.persistence.enabled }}
+      volumes:
+        - name: vpro-db-data
+          persistentVolumeClaim:
+            claimName: {{ .Values.database.name }}-pvc
+      {{- end }}
+

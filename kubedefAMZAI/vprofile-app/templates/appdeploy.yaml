@@ -1,0 +1,44 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.app.name }}
+  labels:
+    {{- include "vprofile-app.labels" . | nindent 4 }}
+    app: {{ .Values.app.name }}
+spec:
+  replicas: {{ .Values.app.replicaCount }}
+  selector:
+    matchLabels:
+      app: {{ .Values.app.name }}
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.app.name }}
+        {{- include "vprofile-app.selectorLabels" . | nindent 8 }}
+    spec:
+      containers:
+        - name: {{ .Values.app.name }}
+          image: "{{ .Values.app.image.repository }}:{{ .Values.app.image.tag }}"
+          imagePullPolicy: {{ .Values.app.image.pullPolicy }}
+
+          env:
+            # - name: MEMCACHE_HOST
+            #   value: "vpromc.{{ .Release.Namespace }}.svc.cluster.local"
+
+            # - name: MEMCACHE_PORT
+            #   value: "11211"
+
+            # - name: RABBITMQ_HOST
+            #   value: "vpromq.{{ .Release.Namespace }}.svc.cluster.local"
+
+            # - name: RABBITMQ_PORT
+            #   value: "5672"
+
+            # - name: DATABASE_HOST
+            #   value: "vprodb.{{ .Release.Namespace }}.svc.cluster.local"
+              
+          ports:
+            - name: {{ printf "%s-port" .Values.app.name }}
+              containerPort: {{ .Values.app.service.port }}
+              protocol: TCP
+
