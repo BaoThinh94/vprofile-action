@@ -127,7 +127,7 @@ jobs:
           #config-files: .github/values/dev.yaml
           chart-path: ./kubedefAMZAI/vprofile-app
           namespace: vprofile
-          values: |
+          values: >
             app.image.repository=${{ secrets.REGISTRY }}/${{ env.ECR_REPO_APP }},
             app.image.tag=${{ github.run_number }},
             database.image.repository=${{ secrets.REGISTRY_DB }}/${{ env.ECR_REPO_DB }},
