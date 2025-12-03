@@ -110,7 +110,11 @@ jobs:
       - name: Print config file
         run: cat ~/.kube/config
 
-      - name: Login to ECR
+      - name: Create namespace if not exists
+        run: |
+           kubectl create namespace vprofile --dry-run=client -o yaml | kubectl apply -f -
+
+      - name: Create or update regcred
         run: |
           kubectl create secret docker-registry regcred \
             --docker-server=${{ secrets.REGISTRY }} \
