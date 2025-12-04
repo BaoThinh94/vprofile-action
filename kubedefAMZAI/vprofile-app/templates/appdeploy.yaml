@@ -22,21 +22,17 @@ spec:
           imagePullPolicy: {{ .Values.app.image.pullPolicy }}
 
           env:
-            # - name: MEMCACHE_HOST
-            #   value: "vpromc.{{ .Release.Namespace }}.svc.cluster.local"
-
-            # - name: MEMCACHE_PORT
-            #   value: "11211"
-
-            # - name: RABBITMQ_HOST
-            #   value: "vpromq.{{ .Release.Namespace }}.svc.cluster.local"
-
-            # - name: RABBITMQ_PORT
-            #   value: "5672"
-
-            # - name: DATABASE_HOST
-            #   value: "vprodb.{{ .Release.Namespace }}.svc.cluster.local"
-              
+           - name: rabbitmq.host
+             value: {{ .Values.rabbitmq.name }}
+           - name: rabbitmq.port
+             value: "{{ .Values.rabbitmq.service.port }}"
+           - name: rabbitmq.username
+             value: "guest"
+           - name: rabbitmq.password
+             valueFrom:
+               secretKeyRef:
+               name: {{ include "vprofile-app.fullname" . }}-secret
+               key: rabbitmq-password     
           ports:
             - name: {{ printf "%s-port" .Values.app.name }}
               containerPort: {{ .Values.app.service.port }}
