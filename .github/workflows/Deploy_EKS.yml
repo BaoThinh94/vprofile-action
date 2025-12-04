@@ -65,10 +65,6 @@ jobs:
           #config-files: .github/values/dev.yaml
           chart-path: ./kubedefAMZAI/vprofile-app
           namespace: vprofile
-          values: |
-            app.image.repository=${{ secrets.REGISTRY }}/${{ env.ECR_REPO_APP }},
-            app.image.tag=latest,
-            database.image.repository=${{ secrets.REGISTRY }}/${{ env.ECR_REPO_DB }},
-            database.image.tag=latest,
-            database.persistence.storageClass=gp2
+          values: "app.image.repository=${{ secrets.REGISTRY }}/${{ env.ECR_REPO_APP }},app.image.tag=latest,database.image.repository=${{ secrets.REGISTRY }}/${{ env.ECR_REPO_DB }},database.image.tag=latest,database.persistence.storageClass=gp2"
+
           name: vprofile-stack
