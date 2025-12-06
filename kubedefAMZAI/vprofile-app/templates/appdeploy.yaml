@@ -19,20 +19,7 @@ spec:
       containers:
         - name: {{ .Values.app.name }}
           image: "{{ .Values.app.image.repository }}:{{ .Values.app.image.tag }}"
-          imagePullPolicy: {{ .Values.app.image.pullPolicy }}
-
-          env:
-          #  - name: rabbitmq.host
-          #    value: {{ .Values.rabbitmq.name }}
-          #  - name: rabbitmq.port
-          #    value: "{{ .Values.rabbitmq.service.port }}"
-          #  - name: rabbitmq.username
-          #    value: "guest"
-          #  - name: rabbitmq.password
-             valueFrom:
-               secretKeyRef:
-               name: {{ include "vprofile-app.fullname" . }}-secret
-               key: rabbitmq-password     
+          imagePullPolicy: {{ .Values.app.image.pullPolicy }}     
           ports:
             - name: {{ printf "%s-port" .Values.app.name }}
               containerPort: {{ .Values.app.service.port }}

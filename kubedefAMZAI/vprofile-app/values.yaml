@@ -3,7 +3,7 @@ app:
   name: vproapp
   replicaCount: 1
   image:
-    repository: ""
+    repository: 220233281547.dkr.ecr.us-east-1.amazonaws.com/vprofileapp
     tag: latest
     pullPolicy: IfNotPresent
   service:
@@ -22,7 +22,7 @@ database:
   name: vprodb
   replicaCount: 1
   image:
-    repository: ""
+    repository: 220233281547.dkr.ecr.us-east-1.amazonaws.com/vprofiledb
     tag: latest
     pullPolicy: IfNotPresent
   service:
@@ -30,7 +30,7 @@ database:
     port: 3306
   persistence:
     enabled: true
-    storageClass: ""
+    storageClass: gp2
     size: 5Gi
   resources:
     limits:
@@ -93,7 +93,7 @@ ingress:
   annotations:
     nginx.ingress.kubernetes.io/rewrite-target: /
   hosts:
-    - host: hkhinfotecktyler.shop
+    - host: k8s.loadbalancer.test.iptp.net
       paths:
         - path: /
           pathType: Prefix
