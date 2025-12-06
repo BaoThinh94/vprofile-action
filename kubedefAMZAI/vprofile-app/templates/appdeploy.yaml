@@ -22,13 +22,13 @@ spec:
           imagePullPolicy: {{ .Values.app.image.pullPolicy }}
 
           env:
-           - name: rabbitmq.host
-             value: {{ .Values.rabbitmq.name }}
-           - name: rabbitmq.port
-             value: "{{ .Values.rabbitmq.service.port }}"
-           - name: rabbitmq.username
-             value: "guest"
-           - name: rabbitmq.password
+          #  - name: rabbitmq.host
+          #    value: {{ .Values.rabbitmq.name }}
+          #  - name: rabbitmq.port
+          #    value: "{{ .Values.rabbitmq.service.port }}"
+          #  - name: rabbitmq.username
+          #    value: "guest"
+          #  - name: rabbitmq.password
              valueFrom:
                secretKeyRef:
                name: {{ include "vprofile-app.fullname" . }}-secret
