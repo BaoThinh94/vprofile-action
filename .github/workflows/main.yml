@@ -20,18 +20,18 @@ jobs:
            username: ${{ secrets.DOCKER_USERNAME }}
            password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-       - name: Build and Push vprofileapp
-         uses: docker/build-push-action@v6
-         with:
-           context: .              
-           file: Dockerfile        
-           push: true
-           tags: ${{ secrets.DOCKER_USERNAME }}/vprofileapp:latest
+      #  - name: Build and Push vprofileapp
+      #    uses: docker/build-push-action@v6
+      #    with:
+      #      context: .              
+      #      file: Dockerfile        
+      #      push: true
+      #      tags: ${{ secrets.DOCKER_USERNAME }}/vprofileapp:latest
 
        - name: Build and Push vprofiledb
          uses: docker/build-push-action@v6
          with:
-           context: ./docker-files/db/             
+           context: ./container/db/             
            file: Dockerfile        
            push: true
            tags: ${{ secrets.DOCKER_USERNAME }}/vprofiledb:latest
