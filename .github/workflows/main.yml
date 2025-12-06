@@ -32,6 +32,7 @@ jobs:
          uses: docker/build-push-action@v6
          with:
            context: ./container/db/             
-           file: Dockerfile        
+           file: ./container/db/Dockerfile.db        
            push: true
            tags: ${{ secrets.DOCKER_USERNAME }}/vprofiledb:latest
+           no-cache: true
