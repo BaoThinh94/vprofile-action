@@ -1,87 +1,37 @@
 name: vprofile actions
 on: workflow_dispatch
-env:
-  AWS_REGION: us-east-1
-  ECR_REPO_APP: vprofileapp
-  ECR_REPO_DB: vprofiledb
-  EKS_CLUSTER: kitops-eks
 
 jobs:
-  Testing:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Code checkout
-        uses: actions/checkout@v4
+    BUILD_AND_PUBLISH:
+     runs-on: ubuntu-latest
+     steps:
+       - name: Code checkout
+         uses: actions/checkout@v4
 
-      - name: Maven test
-        run: mvn test
+       - name: 🛠️ Set up QEMU (cho multi-platform builds)
+         uses: docker/setup-qemu-action@v3
 
-      - name: Checkstyle
-        run: mvn checkstyle:checkstyle
+       - name: 🏗️ Set up Docker Buildx (công cụ build mạnh mẽ)
+         uses: docker/setup-buildx-action@v3
+        
+       - name: 🔑 Log in to Docker Hub
+         uses: docker/login-action@v3
+         with:
+           username: ${{ secrets.DOCKER_USERNAME }}
+           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-      # Setup java 11 to be default (sonar-scanner requirement as of 5.x)
-      - name: Set Java 11
-        uses: actions/setup-java@v3
-        with:
-         distribution: 'temurin' # See 'Supported distributions' for available options
-         java-version: '11'
+       - name: Build and Push vprofileapp
+         uses: docker/build-push-action@v6
+         with:
+           context: .              
+           file: Dockerfile        
+           push: true
+           tags: ${{ secrets.DOCKER_USERNAME }}/vprofileapp:latest
 
-      # Setup sonar-scanner
-      - name: Setup SonarQube
-        uses: warchant/setup-sonar-scanner@v7
-
-      # Run sonar-scanner
-      - name: SonarQube Scan
-        run: sonar-scanner
-           -Dsonar.host.url=${{ secrets.SONAR_URL }}
-           -Dsonar.login=${{ secrets.SONAR_TOKEN }}
-           -Dsonar.organization=${{ secrets.SONAR_ORGANIZATION }}
-           -Dsonar.projectKey=${{ secrets.SONAR_PROJECT_KEY }}
-           -Dsonar.sources=src/
-           -Dsonar.junit.reportsPath=target/surefire-reports/ 
-           -Dsonar.jacoco.reportsPath=target/jacoco.exec 
-           -Dsonar.java.checkstyle.reportPaths=target/checkstyle-result.xml
-           -Dsonar.java.binaries=target/test-classes/com/visualpathit/account/controllerTest/  
-
-      # Check the Quality Gate status.
-      - name: SonarQube Quality Gate check
-        id: sonarqube-quality-gate-check
-        uses: sonarsource/sonarqube-quality-gate-action@master
-        # Force to fail step after specific time.
-        timeout-minutes: 5
-        env:
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-          SONAR_HOST_URL: ${{ secrets.SONAR_URL }} #OPTIONAL
-       
-  BUILD_AND_PUBLISH:   
-    needs: Testing
-    runs-on: ubuntu-latest
-    steps:
-      - name: Code checkout
-        uses: actions/checkout@v4
-
-      - name: Build & Upload image vproapp to ECR
-        uses: appleboy/docker-ecr-action@master
-        with:
-         access_key: ${{ secrets.AWS_ACCESS_KEY_ID }}
-         secret_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-         registry: ${{ secrets.REGISTRY }}
-         repo: ${{ env.ECR_REPO_APP }}
-         region: ${{ env.AWS_REGION }}
-         tags: latest,${{ github.run_number }}
-         daemon_off: false
-         dockerfile: ./Dockerfile
-         context: ./
-
-      - name: Build & Upload image vprodb to ECR
-        uses: appleboy/docker-ecr-action@master
-        with:
-         access_key: ${{ secrets.AWS_ACCESS_KEY_ID }}
-         secret_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-         registry: ${{ secrets.REGISTRY_DB }}
-         repo: ${{ env.ECR_REPO_DB }}
-         region: ${{ env.AWS_REGION }}
-         tags: latest,${{ github.run_number }}
-         daemon_off: false
-         dockerfile: ./Docker-files/db/Dockerfile
-         context: ./
+       - name: Build and Push vprofiledb
+         uses: docker/build-push-action@v6
+         with:
+           context: ./docker-files/db/             
+           file: Dockerfile        
+           push: true
+           tags: ${{ secrets.DOCKER_USERNAME }}/vprofiledb:latest
